@@ -1,10 +1,10 @@
-package mk.ukim.finki.labb.model;
+package mk.ukim.finki.labb.model.domain;
 
 import jakarta.persistence.*;
 
 
 import lombok.Data;
-import mk.ukim.finki.labb.model.enumerations.Category;
+import mk.ukim.finki.labb.model.enums.Category;
 
 @Data
 @Entity

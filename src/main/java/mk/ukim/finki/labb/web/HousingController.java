@@ -1,9 +1,10 @@
 package mk.ukim.finki.labb.web;
 
 
-import mk.ukim.finki.labb.model.Housing;
-import mk.ukim.finki.labb.model.dto.HousingDto;
-import mk.ukim.finki.labb.service.HousingService;
+import io.swagger.v3.oas.annotations.Operation;
+import mk.ukim.finki.labb.dto.CreateHousingDto;
+import mk.ukim.finki.labb.dto.DisplayHousingDto;
+import mk.ukim.finki.labb.service.application.HousingApplicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,39 +14,50 @@ import java.util.List;
 @RequestMapping("/api/housing")
 public class HousingController {
 
-    private final HousingService housingService;
+    private final HousingApplicationService housingService;
 
-    public HousingController(HousingService housingService) {
+    public HousingController(HousingApplicationService housingService) {
         this.housingService = housingService;
     }
 
+    @Operation(
+            summary = "Get all housing entries",
+            description = "Returns a list of all available housing listings."
+    )
     @GetMapping
-    public List<Housing> findall(){
+    public List<DisplayHousingDto> findall(){
         return this.housingService.findAll();
     }
 
+    @Operation(
+            summary = "Find housing by ID",
+            description = "Returns a specific housing entry by its ID. Responds with 404 if not found."
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<Housing> findById(@PathVariable Long id) {
+    public ResponseEntity<DisplayHousingDto> findById(@PathVariable Long id) {
         return housingService.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    @Operation(
+            summary = "Create new housing entry",
+            description = "Adds a new housing listing with the provided information."
+    )
     @PostMapping("/add")
-    public ResponseEntity<Housing> save(@RequestBody HousingDto housing) {
+    public ResponseEntity<DisplayHousingDto> save(@RequestBody CreateHousingDto housing) {
         return housingService.save(housing)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-//    @PatchMapping("/{houseId}/rent")
-//    public ResponseEntity<Housing> rent(@PathVariable Long houseId) {
-//        return housingService.rentHouse(houseId).map(ResponseEntity::ok).orElse(ResponseEntity.badRequest().build());
-//    }
 
-
+    @Operation(
+            summary = "Rent a housing unit",
+            description = "Rents one room from the housing unit with the given ID. If no rooms are left, returns a bad request."
+    )
     @PatchMapping("/{id}/rent")
     public ResponseEntity<?> rent(@PathVariable Long id) {
         try {
-            Housing bookedHousing = housingService.rentHouse(id).orElseThrow();
+            DisplayHousingDto bookedHousing = housingService.rentHouse(id).orElseThrow();
             return ResponseEntity.ok(bookedHousing);
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -53,13 +65,21 @@ public class HousingController {
     }
 
 
+    @Operation(
+            summary = "Update a housing entry",
+            description = "Updates the details of a housing listing by ID."
+    )
     @PatchMapping("/update/{houseId}")
-    public ResponseEntity<Housing> update(@PathVariable Long houseId,@RequestBody HousingDto housing) {
+    public ResponseEntity<DisplayHousingDto> update(@PathVariable Long houseId,@RequestBody CreateHousingDto housing) {
         return housingService.update(houseId, housing)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @Operation(
+            summary = "Delete a housing entry",
+            description = "Deletes the housing listing with the specified ID. Returns 404 if not found."
+    )
     @DeleteMapping("/delete/{houseId}")
     public ResponseEntity<Void> delete(@PathVariable Long houseId) {
         if (housingService.findById(houseId).isPresent()) {

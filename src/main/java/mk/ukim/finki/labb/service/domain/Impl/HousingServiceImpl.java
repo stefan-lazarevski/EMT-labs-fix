@@ -1,13 +1,12 @@
-package mk.ukim.finki.labb.service.impl;
+package mk.ukim.finki.labb.service.domain.Impl;
 
-import mk.ukim.finki.labb.model.Host;
-import mk.ukim.finki.labb.model.Housing;
-import mk.ukim.finki.labb.model.dto.HousingDto;
-import mk.ukim.finki.labb.model.enumerations.Category;
+
+import mk.ukim.finki.labb.model.domain.Host;
+import mk.ukim.finki.labb.model.domain.Housing;
 import mk.ukim.finki.labb.repository.CountryRepository;
 import mk.ukim.finki.labb.repository.HostRepository;
 import mk.ukim.finki.labb.repository.HousingRepository;
-import mk.ukim.finki.labb.service.HousingService;
+import mk.ukim.finki.labb.service.domain.HousingService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,7 +37,7 @@ public class HousingServiceImpl implements HousingService {
     }
 
     @Override
-    public Optional<Housing> update(Long id, HousingDto housingDto) {
+    public Optional<Housing> update(Long id, Housing housingDto) {
         return housingRepository.findById(id).map(existingHouse -> {
             if (housingDto.getName() != null) {
                 existingHouse.setName(housingDto.getName());
@@ -46,8 +45,8 @@ public class HousingServiceImpl implements HousingService {
             if (housingDto.getCategory() != null) {
                 existingHouse.setCategory(housingDto.getCategory());
             }
-            if (housingDto.getHostId() != null && hostRepository.findById(housingDto.getHostId()).isPresent()) {
-                existingHouse.setHost(hostRepository.findById(housingDto.getHostId()).get());
+            if (housingDto.getHost().getId() != null && hostRepository.findById(housingDto.getHost().getId()).isPresent()) {
+                existingHouse.setHost(hostRepository.findById(housingDto.getHost().getId()).get());
             }
             if (housingDto.getNumRooms() != null) {
                 existingHouse.setNumRooms(housingDto.getNumRooms());
@@ -58,10 +57,10 @@ public class HousingServiceImpl implements HousingService {
     }
 
     @Override
-    public Optional<Housing> save(HousingDto housing) {
-        Optional<Host> host = hostRepository.findById(housing.getHostId());
+    public Optional<Housing> save(Housing housing) {
+        Optional<Host> host = hostRepository.findById(housing.getHost().getId());
         return host.map(houseHost -> housingRepository.save
-                (new Housing(housing.getName(), housing.getCategory(),hostRepository.findById(housing.getHostId()).get(), housing.getNumRooms())));
+                (new Housing(housing.getName(), housing.getCategory(),hostRepository.findById(housing.getHost().getId()).get(), housing.getNumRooms())));
     }
 
     @Override
