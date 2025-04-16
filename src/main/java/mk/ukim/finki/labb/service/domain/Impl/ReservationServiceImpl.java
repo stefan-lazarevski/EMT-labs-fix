@@ -63,4 +63,22 @@ public class ReservationServiceImpl implements ReservationService {
         return Optional.empty();
 
     }
+
+    @Override
+    public Optional<Reservation> confirmReservation(String username) {
+        Reservation reservation = getActiveReservations(username)
+                .orElseThrow(() -> new IllegalStateException("No active reservation found"));
+
+        boolean hasRentedHousing = reservation.getHouses().stream()
+                .anyMatch(h -> reservationRepository.existsByHousesContainsAndStatus(h, ReservationStatus.RENTED));
+
+        if (hasRentedHousing) {
+            throw new IllegalStateException("One or more housings are already rented");
+        }
+
+        reservation.setStatus(ReservationStatus.RENTED);
+        return Optional.of(reservationRepository.save(reservation));
+    }
+
+
 }

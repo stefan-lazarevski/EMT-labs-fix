@@ -66,4 +66,27 @@ public class ReservationController {
         }
     }
 
+
+    @Operation(
+            summary = "Confirm reservation",
+            description = "Confirms the current user's reservation and marks all housings as rented"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reservation confirmed successfully"),
+            @ApiResponse(responseCode = "400", description = "One or more housings are already rented"),
+            @ApiResponse(responseCode = "404", description = "No active reservation found")
+    })
+    @PostMapping("/confirm")
+    public ResponseEntity<ReservationDto> confirmReservation(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return reservationApplicationService.confirmReservation(user.getUsername())
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(null); // You could also send back the message
+        }
+    }
+
+
 }

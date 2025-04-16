@@ -15,4 +15,6 @@ public interface ReservationService {
 
     Optional<Reservation> addHousingsToReservations(String username, Long housingId);
 
+    Optional<Reservation> confirmReservation(String username);
+
 }
