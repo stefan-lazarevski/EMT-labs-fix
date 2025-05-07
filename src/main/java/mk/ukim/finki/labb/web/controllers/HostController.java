@@ -1,4 +1,4 @@
-package mk.ukim.finki.labb.web;
+package mk.ukim.finki.labb.web.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import mk.ukim.finki.labb.dto.CreateHostDto;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/host")
+@RequestMapping("/api/hosts")
 public class HostController {
 
     private final HostApplicationService hostService;

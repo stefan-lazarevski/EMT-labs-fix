@@ -1,4 +1,4 @@
-package mk.ukim.finki.labb.config;
+package mk.ukim.finki.labb.config.init;
 
 import jakarta.annotation.PostConstruct;
 import mk.ukim.finki.labb.model.domain.Country;

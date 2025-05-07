@@ -1,6 +1,7 @@
 package mk.ukim.finki.labb.service.domain;
 
 import mk.ukim.finki.labb.model.domain.Housing;
+import mk.ukim.finki.labb.model.enums.Category;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,4 +21,7 @@ public interface HousingService {
 
     Optional<Housing> rentHouse(Long houseId);
 
+    List<Housing> findByFilters(String name, Category category, Long hostId, Integer numRooms);
+
+    void refreshMaterializedView();
 }

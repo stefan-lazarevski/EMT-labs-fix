@@ -38,6 +38,7 @@ public class User implements UserDetails {
     // to-one -> FetchType.EAGER
     // to-many -> FetchType.LAZY
 
+
     public User() {
     }
 

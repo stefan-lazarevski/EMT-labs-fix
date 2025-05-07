@@ -23,7 +23,12 @@ public class Reservation {
     private List<Housing> houses;
 
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private User user;
+
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_username")
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.SET_NULL)
     private User user;
 
     @Enumerated(EnumType.STRING)

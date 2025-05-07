@@ -1,7 +1,9 @@
-package mk.ukim.finki.labb.config;
+package mk.ukim.finki.labb.config.security;
 
+import mk.ukim.finki.labb.security.CustomUsernamePasswordAuthenticationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -20,6 +22,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@Profile("test")
 public class WebSecurityConfig {
 
     private final CustomUsernamePasswordAuthenticationProvider authenticationProvider;

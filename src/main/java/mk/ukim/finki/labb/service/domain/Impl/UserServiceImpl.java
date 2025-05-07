@@ -2,10 +2,7 @@ package mk.ukim.finki.labb.service.domain.Impl;
 
 import mk.ukim.finki.labb.model.domain.User;
 import mk.ukim.finki.labb.model.enums.Role;
-import mk.ukim.finki.labb.model.exceptions.InvalidArgumentsException;
-import mk.ukim.finki.labb.model.exceptions.InvalidUsernameOrPasswordException;
-import mk.ukim.finki.labb.model.exceptions.PasswordsDoNotMatchException;
-import mk.ukim.finki.labb.model.exceptions.UsernameAlreadyExistsException;
+import mk.ukim.finki.labb.model.exceptions.*;
 import mk.ukim.finki.labb.repository.UserRepository;
 import mk.ukim.finki.labb.service.domain.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -59,8 +56,13 @@ public class UserServiceImpl implements UserService {
         if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
             throw new InvalidArgumentsException();
         }
-        return userRepository.findByUsernameAndPassword(username, password).orElseThrow(
-                InvalidArgumentsException::new);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(()-> new UsernameNotFoundException(username));
+        if (!passwordEncoder.matches(password, user.getPassword()))
+            throw new InvalidUserCredentialsException();
+        return user;
+//        return userRepository.findByUsernameAndPassword(username, password).orElseThrow(
+//                InvalidArgumentsException::new);
     }
 
 }

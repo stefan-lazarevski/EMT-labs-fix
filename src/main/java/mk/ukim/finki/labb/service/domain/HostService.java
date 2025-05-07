@@ -16,4 +16,6 @@ public interface HostService {
     Optional<Host> update(Long id, Host host);
 
     void deleteById(Long id);
+
+    void refreshMaterializedView();
 }

@@ -3,8 +3,10 @@ package mk.ukim.finki.labb.service.domain.Impl;
 
 import mk.ukim.finki.labb.model.domain.Host;
 import mk.ukim.finki.labb.model.domain.Housing;
+import mk.ukim.finki.labb.model.enums.Category;
 import mk.ukim.finki.labb.repository.CountryRepository;
 import mk.ukim.finki.labb.repository.HostRepository;
+import mk.ukim.finki.labb.repository.HousingCountViewRepository;
 import mk.ukim.finki.labb.repository.HousingRepository;
 import mk.ukim.finki.labb.service.domain.HousingService;
 import org.springframework.stereotype.Service;
@@ -18,12 +20,14 @@ public class HousingServiceImpl implements HousingService {
     private final HousingRepository housingRepository;
     private final HostRepository hostRepository;
     private final CountryRepository countryRepository;
+    private final HousingCountViewRepository housingCountViewRepository;
 
 
-    public HousingServiceImpl(HousingRepository housingRepository, HostRepository hostRepository, CountryRepository countryRepository) {
+    public HousingServiceImpl(HousingRepository housingRepository, HostRepository hostRepository, CountryRepository countryRepository, HousingCountViewRepository housingCountViewRepository) {
         this.housingRepository = housingRepository;
         this.hostRepository = hostRepository;
         this.countryRepository = countryRepository;
+        this.housingCountViewRepository = housingCountViewRepository;
     }
 
     @Override
@@ -51,8 +55,11 @@ public class HousingServiceImpl implements HousingService {
             if (housingDto.getNumRooms() != null) {
                 existingHouse.setNumRooms(housingDto.getNumRooms());
             }
+            Housing updateHousing = housingRepository.save(existingHouse);
+            this.refreshMaterializedView();
+            return updateHousing;
 
-            return housingRepository.save(existingHouse);
+//            return housingRepository.save(existingHouse);
         });
     }
 
@@ -80,5 +87,16 @@ public class HousingServiceImpl implements HousingService {
     @Override
     public void deleteById(Long id) {
         housingRepository.deleteById(id);
+    }
+
+
+    @Override
+    public List<Housing> findByFilters(String name, Category category, Long hostId, Integer numRooms) {
+        return housingRepository.findByFilters(name, category, hostId, numRooms);
+    }
+
+    @Override
+    public void refreshMaterializedView() {
+            housingCountViewRepository.refreshMaterializedView();
     }
 }

@@ -2,6 +2,7 @@ package mk.ukim.finki.labb.service.application.impl;
 
 import mk.ukim.finki.labb.dto.CreateHousingDto;
 import mk.ukim.finki.labb.dto.DisplayHousingDto;
+import mk.ukim.finki.labb.model.enums.Category;
 import mk.ukim.finki.labb.service.application.HousingApplicationService;
 import mk.ukim.finki.labb.service.domain.HousingService;
 import org.springframework.stereotype.Service;
@@ -53,5 +54,13 @@ public class HousingApplicationServiceImpl implements HousingApplicationService 
     @Override
     public void deleteById(Long id) {
         housingService.deleteById(id);
+    }
+
+    @Override
+    public List<DisplayHousingDto> search(String name, Category category, Long hostId, Integer numRooms) {
+        return housingService.findByFilters(name, category, hostId, numRooms)
+                .stream()
+                .map(DisplayHousingDto::from)
+                .toList();
     }
 }

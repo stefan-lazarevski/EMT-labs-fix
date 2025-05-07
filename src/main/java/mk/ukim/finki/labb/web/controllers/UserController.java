@@ -1,4 +1,4 @@
-package mk.ukim.finki.labb.web;
+package mk.ukim.finki.labb.web.controllers;
 
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +15,7 @@ import mk.ukim.finki.labb.model.exceptions.InvalidUserCredentialsException;
 import mk.ukim.finki.labb.model.exceptions.PasswordsDoNotMatchException;
 import mk.ukim.finki.labb.service.application.UserApplicationService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -81,6 +82,16 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @Operation(summary = "Get current authenticated user", description = "Returns user info based on JWT")
+    @GetMapping("/me")
+    public ResponseEntity<DisplayUserDto> getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userApplicationService.findByUsername(username)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 
 
 }
