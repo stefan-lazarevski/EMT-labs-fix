@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import mk.ukim.finki.labb.dto.CreateUserDto;
 import mk.ukim.finki.labb.dto.DisplayUserDto;
+import mk.ukim.finki.labb.dto.LoginResponseDto;
 import mk.ukim.finki.labb.dto.LoginUserDto;
 import mk.ukim.finki.labb.model.exceptions.InvalidArgumentsException;
 import mk.ukim.finki.labb.model.exceptions.InvalidUserCredentialsException;
@@ -54,25 +55,41 @@ public class UserController {
                     description = "User authenticated successfully"
             ), @ApiResponse(responseCode = "404", description = "Invalid username or password")}
     )
-    @PostMapping("/login")
-    public ResponseEntity<DisplayUserDto> login(HttpServletRequest request) {
-        try {
-            DisplayUserDto displayUserDto = userApplicationService.login(
-                    new LoginUserDto(request.getParameter("username"), request.getParameter("password"))
-            ).orElseThrow(InvalidUserCredentialsException::new);
+//    @PostMapping("/login")
+//    public ResponseEntity<DisplayUserDto> login(HttpServletRequest request) {
+//        try {
+//            DisplayUserDto displayUserDto = userApplicationService.login(
+//                    new LoginUserDto(request.getParameter("username"), request.getParameter("password"))
+//            ).orElseThrow(InvalidUserCredentialsException::new);
+//
+//            request.getSession().setAttribute("user", displayUserDto.toUser());
+//            return ResponseEntity.ok(displayUserDto);
+//        } catch (InvalidUserCredentialsException e) {
+//            return ResponseEntity.notFound().build();
+//        }
 
-            request.getSession().setAttribute("user", displayUserDto.toUser());
-            return ResponseEntity.ok(displayUserDto);
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginUserDto loginUserDto) {
+        try {
+//            return userApplicationService.login(loginUserDto)
+//                    .map(ResponseEntity::ok)
+//                    .orElseThrow(InvalidUserCredentialsException::new);
+            return userApplicationService.login(loginUserDto)
+                    .map(ResponseEntity::ok)
+                    .orElseThrow(RuntimeException::new);
         } catch (InvalidUserCredentialsException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @Operation(summary = "User logout", description = "Ends the user's session")
-    @ApiResponse(responseCode = "200", description = "User logged out successfully")
-    @GetMapping("/logout")
-    public void logout(HttpServletRequest request) {
-        request.getSession().invalidate();
-    }
+
 }
+
+//    @Operation(summary = "User logout", description = "Ends the user's session")
+//    @ApiResponse(responseCode = "200", description = "User logged out successfully")
+//    @GetMapping("/logout")
+//    public void logout(HttpServletRequest request) {
+//        request.getSession().invalidate();
+//    }
+
 

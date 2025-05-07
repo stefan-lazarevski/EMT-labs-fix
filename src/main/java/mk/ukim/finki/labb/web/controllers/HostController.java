@@ -3,6 +3,10 @@ package mk.ukim.finki.labb.web;
 import io.swagger.v3.oas.annotations.Operation;
 import mk.ukim.finki.labb.dto.CreateHostDto;
 import mk.ukim.finki.labb.dto.DisplayHostDto;
+import mk.ukim.finki.labb.model.projections.HostNameView;
+import mk.ukim.finki.labb.model.views.HostCountView;
+import mk.ukim.finki.labb.repository.HostCountViewRepository;
+import mk.ukim.finki.labb.repository.HostRepository;
 import mk.ukim.finki.labb.service.application.HostApplicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +18,13 @@ import java.util.List;
 public class HostController {
 
     private final HostApplicationService hostService;
+    private final HostCountViewRepository hostCountViewRepository;
+    private final HostRepository hostRepository;
 
-    public HostController(HostApplicationService hostService) {
+    public HostController(HostApplicationService hostService, HostCountViewRepository hostCountViewRepository, HostRepository hostRepository) {
         this.hostService = hostService;
+        this.hostCountViewRepository = hostCountViewRepository;
+        this.hostRepository = hostRepository;
     }
 
     @Operation(
@@ -70,5 +78,15 @@ public class HostController {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/by-country")
+    public List<HostCountView> getHostCountByCountry() {
+        return hostCountViewRepository.findAll();
+    }
+
+    @GetMapping("/names")
+    public List<HostNameView> getHostNames() {
+        return hostRepository.findAllBy();
     }
 }

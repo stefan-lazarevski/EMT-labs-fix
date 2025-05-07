@@ -4,6 +4,9 @@ package mk.ukim.finki.labb.web;
 import io.swagger.v3.oas.annotations.Operation;
 import mk.ukim.finki.labb.dto.CreateHousingDto;
 import mk.ukim.finki.labb.dto.DisplayHousingDto;
+import mk.ukim.finki.labb.model.enums.Category;
+import mk.ukim.finki.labb.model.views.HousingCountView;
+import mk.ukim.finki.labb.repository.HousingCountViewRepository;
 import mk.ukim.finki.labb.service.application.HousingApplicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +18,11 @@ import java.util.List;
 public class HousingController {
 
     private final HousingApplicationService housingService;
+    private final HousingCountViewRepository housingCountViewRepository;
 
-    public HousingController(HousingApplicationService housingService) {
+    public HousingController(HousingApplicationService housingService, HousingCountViewRepository housingCountViewRepository) {
         this.housingService = housingService;
+        this.housingCountViewRepository = housingCountViewRepository;
     }
 
     @Operation(
@@ -87,6 +92,25 @@ public class HousingController {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+
+    @Operation(
+            summary = "Search housing entries",
+            description = "Returns housing entries filtered by name, category, host, and number of rooms. All parameters are optional."
+    )
+    @GetMapping("/search")
+    public List<DisplayHousingDto> search(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Category category,
+            @RequestParam(required = false) Long hostId,
+            @RequestParam(required = false) Integer numRooms) {
+        return housingService.search(name, category, hostId, numRooms);
+    }
+
+    @GetMapping("/by-host")
+    public List<HousingCountView> getHousingByHost() {
+        return housingCountViewRepository.findAll();
     }
 
 }
