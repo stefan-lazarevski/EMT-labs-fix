@@ -13,6 +13,7 @@ import mk.ukim.finki.labb.dto.LoginUserDto;
 import mk.ukim.finki.labb.model.exceptions.InvalidArgumentsException;
 import mk.ukim.finki.labb.model.exceptions.InvalidUserCredentialsException;
 import mk.ukim.finki.labb.model.exceptions.PasswordsDoNotMatchException;
+import mk.ukim.finki.labb.model.exceptions.UserNotFoundException;
 import mk.ukim.finki.labb.service.application.UserApplicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -78,7 +79,7 @@ public class UserController {
             return userApplicationService.login(loginUserDto)
                     .map(ResponseEntity::ok)
                     .orElseThrow(RuntimeException::new);
-        } catch (InvalidUserCredentialsException e) {
+        } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
